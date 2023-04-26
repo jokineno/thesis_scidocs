@@ -11,7 +11,7 @@ from scidocs.embeddings import load_embeddings_from_jsonl
 np.random.seed(1)
 
 
-def get_mag_mesh_metrics(data_paths, embeddings_path=None, val_or_test='test', n_jobs=1):
+def get_mag_mesh_metrics(data_paths, embeddings_path=None, val_or_test='test', n_jobs=1, debug=False):
     """Run MAG and MeSH tasks.
 
     Arguments:
@@ -33,16 +33,16 @@ def get_mag_mesh_metrics(data_paths, embeddings_path=None, val_or_test='test', n
 
     print('Running the MAG task...')
     X, y = get_X_y_for_classification(embeddings, data_paths.mag_train, data_paths.mag_val, data_paths.mag_test)
-    mag_f1 = classify(X['train'], y['train'], X[val_or_test], y[val_or_test], n_jobs=n_jobs)
+    mag_f1 = classify(X['train'], y['train'], X[val_or_test], y[val_or_test], n_jobs=n_jobs, debug=debug)
     
     print('Running the MeSH task...')
     X, y = get_X_y_for_classification(embeddings, data_paths.mesh_train, data_paths.mesh_val, data_paths.mesh_test)
-    mesh_f1 = classify(X['train'], y['train'], X[val_or_test], y[val_or_test], n_jobs=n_jobs)
+    mesh_f1 = classify(X['train'], y['train'], X[val_or_test], y[val_or_test], n_jobs=n_jobs, debug=debug)
 
     return {'mag': {'f1': mag_f1}, 'mesh': {'f1': mesh_f1}}
 
 
-def classify(X_train, y_train, X_test, y_test, n_jobs=1):
+def classify(X_train, y_train, X_test, y_test, n_jobs=1, debug=False):
     """
     Simple classification methods using sklearn framework.
     Selection of C happens inside of X_train, y_train via
@@ -56,11 +56,22 @@ def classify(X_train, y_train, X_test, y_test, n_jobs=1):
         F1 on X_test, y_test (out of 100), rounded to two decimal places
     """
     estimator = LinearSVC(loss="squared_hinge", random_state=42)
-    Cs = np.logspace(-4, 2, 7)
-    svm = GridSearchCV(estimator=estimator, cv=3, param_grid={'C': Cs}, verbose=1, n_jobs=n_jobs)
+
+    if debug:
+        print("\n")
+        print("============Using ***debug*** Cross Validation==============")
+        Cs = np.logspace(-4, 2, 1)
+        svm = GridSearchCV(estimator=estimator, cv=2, param_grid={'C': Cs}, verbose=1, n_jobs=n_jobs)
+    else:
+        print("============Using ***REAL* ** Cross Validation==============")
+        Cs = np.logspace(-4, 2, 7)
+        svm = GridSearchCV(estimator=estimator, cv=3, param_grid={'C': Cs}, verbose=1, n_jobs=n_jobs)
+
     svm.fit(X_train, y_train)
     preds = svm.predict(X_test)
-    return np.round(100 * f1_score(y_test, preds, average='macro'), 2)
+    result = np.round(100 * f1_score(y_test, preds, average='macro'), 2)
+    print("f1_score: {}".format(result))
+    return result
 
 
 def get_X_y_for_classification(embeddings, train_path, val_path, test_path):
@@ -81,6 +92,7 @@ def get_X_y_for_classification(embeddings, train_path, val_path, test_path):
     train = pd.read_csv(train_path)
     val = pd.read_csv(val_path)
     test = pd.read_csv(test_path)
+    print("train: {}, test: {}, val: {}".format(train.shape, test.shape, val.shape))
     X = defaultdict(list)
     y = defaultdict(list)
     for dataset_name, dataset in zip(['train', 'val', 'test'], [train, val, test]):

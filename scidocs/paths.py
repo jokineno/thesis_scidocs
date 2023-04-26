@@ -29,13 +29,23 @@ class DataPaths:
         self.mesh_train = os.path.join(base_path, 'mesh', 'train.csv')
         self.mesh_val = os.path.join(base_path, 'mesh', 'val.csv')
         self.mesh_test = os.path.join(base_path, 'mesh', 'test.csv')
-        
-        self.recomm_train = os.path.join(base_path, 'recomm', 'train.csv')
-        self.recomm_val = os.path.join(base_path, 'recomm', 'val.csv')
-        self.recomm_test = os.path.join(base_path, 'recomm', 'test.csv')
-        self.recomm_config = os.path.join(base_path, 'recomm', 'train_similar_papers_model.json')
-        self.recomm_propensity_scores = os.path.join(base_path, 'recomm', 'propensity_scores.json')
-        
+
         self.paper_metadata_view_cite_read = os.path.join(base_path, 'paper_metadata_view_cite_read.json')
         self.paper_metadata_mag_mesh = os.path.join(base_path, 'paper_metadata_mag_mesh.json')
-        self.paper_metadata_recomm = os.path.join(base_path, 'paper_metadata_recomm.json')
+
+        """
+        # =======================THESIS SOURCES START=================
+        self.thesis_paper_metadata_cross_link = os.path.join(base_path, 'thesis_paper_metadata_cite.json')
+        self.thesis_paper_metadata_wikiclass = os.path.join(base_path, 'thesis_paper_metadata_wikiclass.json')
+
+        # THESIS DIRECT CITATION
+        self.thesis_direct_link_val = os.path.join(base_path, 'thesis_direct_link', 'val.qrel')
+        self.thesis_direct_link_test = os.path.join(base_path, 'thesis_direct_link', 'test.qrel')
+
+        # THESIS WIKI CLASS CLASSIFICATION
+        self.wikicls_train = os.path.join(base_path, 'thesis_wikiclass_classification', 'train.csv')
+        self.wikicls_val = os.path.join(base_path, 'thesis_wikiclass_classification', 'val.csv')
+        self.wikicls_test = os.path.join(base_path, 'thesis_wikiclass_classification', 'test.csv')
+
+        # =======================THESIS SOURCES END=================
+        """

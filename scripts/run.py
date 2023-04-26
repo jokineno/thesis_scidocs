@@ -1,14 +1,12 @@
 
 from scidocs.paths import DataPaths
-from scidocs import get_scidocs_metrics
+from scidocs import get_wikidocs_metrics
 
 import argparse
 import json
 import pandas as pd
 
-
 pd.set_option('display.max_columns', None)
-
 
 def main():
     parser = argparse.ArgumentParser()
@@ -19,22 +17,26 @@ def main():
     parser.add_argument('--n-jobs', default=12, help='number of parallel jobs for classification (related to mesh/mag metrics)', type=int)
     parser.add_argument('--cuda-device', default=-1, help='specify if you want to use gpu for training the recommendation model; -1 means use cpu')
     parser.add_argument('--data-path', default=None, help='path to the data directory where scidocs files reside. If None, it will default to the `data/` directory')
+    parser.add_argument("--debug", default=False, type=bool, help="DEBUG OR NOT")
     args = parser.parse_args()
-
     data_paths = DataPaths(args.data_path)
+    debug = args.debug
+    print("DEBUG:", debug)
 
-    scidocs_metrics = get_scidocs_metrics(
+    print("==================Running thesis version 1==================\n")
+    metrics = get_wikidocs_metrics(
         data_paths,
         args.cls,
         args.user_citation,
-        args.recomm,
         val_or_test=args.val_or_test,
         n_jobs=args.n_jobs,
-        cuda_device=args.cuda_device
+        cuda_device=args.cuda_device,
+        debug=debug
     )
+    print("=============THESIS DONE==============")
 
     flat_metrics = {}
-    for k, v in scidocs_metrics.items():
+    for k, v in metrics.items():
         if not isinstance(v, dict):
             flat_metrics[k] = v
         else:
