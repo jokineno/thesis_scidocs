@@ -17,6 +17,12 @@ Here we are using output from the thesis_specter repository. The output will be
 ## Initial
 Run scripts 1-3
 
+## Inference and evaluation
+- Run
+```
+./3-predict.sh --thesis 
+```
+If you run without ***--thesis*** then original scidocs will be run.
 
 
 ### Metadata schema 
@@ -24,10 +30,11 @@ Run scripts 1-3
 - This metadata can be used 
 
 ```json
- "<paper_id>": {
+{
+  "<paper_id>": {
     "abstract": "<string>",
     "authors": [
-      "<string>",
+      "<string>"
     ],
     "cited_by": [
       "<cite_paper_id>"
@@ -35,11 +42,12 @@ Run scripts 1-3
     "paper_id": "<paper_id>",
     "references": [
       "<outgoing_1>",
-      "<outgoing_2>",
+      "<outgoing_2>"
     ],
     "title": "Learning to Discriminate Noises for Incorporating External Information in Neural Machine Translation",
     "year": 2018
-  },
+  }
+}
 
 ```
 

@@ -31,15 +31,39 @@ def get_mag_mesh_metrics(data_paths, embeddings_path=None, val_or_test='test', n
     print('Loading MAG/MeSH embeddings...')
     embeddings = load_embeddings_from_jsonl(embeddings_path)
 
-    print('Running the MAG task...')
-    X, y = get_X_y_for_classification(embeddings, data_paths.mag_train, data_paths.mag_val, data_paths.mag_test)
-    mag_f1 = classify(X['train'], y['train'], X[val_or_test], y[val_or_test], n_jobs=n_jobs, debug=debug)
+    print('Running the Wiki Class task...')
+    X, y = get_X_y_for_classification(embeddings, data_paths.wiki_cls_train, data_paths.wiki_cls_val, data_paths.wiki_cls_test)
+    wiki_cls = classify(X['train'], y['train'], X[val_or_test], y[val_or_test], n_jobs=n_jobs, debug=debug)
     
-    print('Running the MeSH task...')
-    X, y = get_X_y_for_classification(embeddings, data_paths.mesh_train, data_paths.mesh_val, data_paths.mesh_test)
-    mesh_f1 = classify(X['train'], y['train'], X[val_or_test], y[val_or_test], n_jobs=n_jobs, debug=debug)
 
-    return {'mag': {'f1': mag_f1}, 'mesh': {'f1': mesh_f1}}
+    return {'mag': {'f1': wiki_cls}}
+
+
+def get_wiki_class_metrics(data_paths, embeddings_path=None, val_or_test='test', n_jobs=1, debug=False):
+    """Run MAG and MeSH tasks.
+
+    Arguments:
+        data_paths {scidocs.paths.DataPaths} -- A DataPaths objects that points to
+                                                all of the SciDocs files
+
+    Keyword Arguments:
+        embeddings_path {str} -- Path to the embeddings jsonl (default: {None})
+        val_or_test {str} -- Whether to return metrics on validation set (to tune hyperparams)
+                             or the test set (what's reported in SPECTER paper)
+
+    Returns:
+        metrics {dict} -- F1 score for both tasks.
+    """
+    assert val_or_test in ('val', 'test'), "The val_or_test parameter must be one of 'val' or 'test'"
+
+    print('Loading WikiClass embeddings...')
+    embeddings = load_embeddings_from_jsonl(embeddings_path)
+
+    print('Running the Wiki class task...')
+    X, y = get_X_y_for_classification(embeddings, data_paths.wiki_cls_train, data_paths.wiki_cls_val, data_paths.wiki_cls_test)
+    mag_f1 = classify(X['train'], y['train'], X[val_or_test], y[val_or_test], n_jobs=n_jobs, debug=debug)
+
+    return {'wiki_class': {'f1': mag_f1}}
 
 
 def classify(X_train, y_train, X_test, y_test, n_jobs=1, debug=False):
@@ -89,9 +113,9 @@ def get_X_y_for_classification(embeddings, train_path, val_path, test_path):
               with keys: 'train', 'val', 'test'
     """
     dim = len(next(iter(embeddings.values())))
-    train = pd.read_csv(train_path)
-    val = pd.read_csv(val_path)
-    test = pd.read_csv(test_path)
+    train = pd.read_csv(train_path, dtype={"pid": str, "class_label": int})
+    val = pd.read_csv(val_path, dtype={"pid": str, "class_label": int})
+    test = pd.read_csv(test_path, dtype={"pid": str, "class_label": int})
     print("train: {}, test: {}, val: {}".format(train.shape, test.shape, val.shape))
     X = defaultdict(list)
     y = defaultdict(list)

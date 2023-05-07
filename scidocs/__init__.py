@@ -1,4 +1,4 @@
-from scidocs.classification import get_mag_mesh_metrics
+from scidocs.classification import get_wiki_class_metrics
 from scidocs.user_activity_and_citations import get_view_cite_read_metrics
 
 
@@ -35,7 +35,17 @@ def get_wikidocs_metrics(data_paths,
     assert val_or_test in ('val', 'test'), "The val_or_test parameter must be one of 'val' or 'test'"
     print("===Fetching wikidocs metrics==")
     wikidocs_metrics = {}
-    wikidocs_metrics.update(get_mag_mesh_metrics(data_paths, classification_embeddings_path, val_or_test=val_or_test, n_jobs=n_jobs, debug=debug))
-    wikidocs_metrics.update(get_view_cite_read_metrics(data_paths, citations_embeddings_path, val_or_test=val_or_test))
+
+    if classification_embeddings_path:
+        wikidocs_metrics.update(get_wiki_class_metrics(data_paths, classification_embeddings_path, val_or_test=val_or_test, n_jobs=n_jobs, debug=debug))
+    else:
+        print("No classifications embeddings path. Not running classification task")
+
+    if citations_embeddings_path:
+        wikidocs_metrics.update(get_wiki_class_metrics(data_paths, citations_embeddings_path, val_or_test=val_or_test))
+    else:
+        print("No citations embeddings path. Not running citations task")
+
+
     print("============DONE============")
     return wikidocs_metrics
