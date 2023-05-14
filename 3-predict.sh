@@ -20,7 +20,8 @@ else
 
   echo "Running ***THESIS DEMO*** "
   python scripts/run.py \
-  --cls thesis_data/specter-embeddings/cls.jsonl \
+  --user-citation thesis_data/myownfinedtuned/user-citation.jsonl \
+  --cls thesis_data/myownfinedtuned/cls.jsonl \
   --val_or_test test \
   --n-jobs 12 \
   --cuda-device -1 \
