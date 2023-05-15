@@ -98,13 +98,14 @@ def make_run_from_embeddings(qrel_file, embeddings, run_file, topk=5, generate_r
     # where relevance is 0=negative or 1=positive
     for line in qrels:
         row = line.split(' ')
-        papers[row[0]].append(row[2])
+        papers[row[0]].append(row[2]) #row[0] = query_id, row[2] = candidate
 
     results = []
 
     missing_queries = 0
     key_error = 0
     success_candidates = 0
+    missing_candidates = []
     for pid in papers:
         try:
             if generate_random_embeddings:
@@ -129,7 +130,12 @@ def make_run_from_embeddings(qrel_file, embeddings, run_file, topk=5, generate_r
                 candidate_ids.append(paper_id)
                 success_candidates += 1
             except KeyError:
+                missing_candidates.append(paper_id)
                 key_error += 1
+
+        print("####MISSING CANDIDATES####")
+        print(missing_candidates)
+        print("####MISSING CANDIDATES####")
 
         # calculate similarity based on l2 norm
         emb_query = np.array(emb_query)
@@ -149,7 +155,7 @@ def make_run_from_embeddings(qrel_file, embeddings, run_file, topk=5, generate_r
             # output is in this format: [qid iter paperid rank similarity run_id]
             if sorted_dists[i][0] in added:
                 continue
-            if i < len(sorted_dists) - topk:
+            if i < len(sorted_dists) - topk: #index is smaller than all - topk
                 results.append([pid, '0', sorted_dists[i][0], '0', str(np.round(sorted_dists[i][1], 5)), 'n/a'])
             else:
                 results.append([pid, '0', sorted_dists[i][0], '1', str(np.round(sorted_dists[i][1], 5)), 'n/a'])

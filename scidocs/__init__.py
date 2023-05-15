@@ -1,5 +1,4 @@
 from scidocs.classification import get_wiki_class_metrics
-from scidocs.user_activity_and_citations import get_view_cite_read_metrics
 from scidocs.user_activity_and_citations import get_wiki_citations_metrics
 
 
