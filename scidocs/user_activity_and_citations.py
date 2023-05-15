@@ -6,12 +6,12 @@ import numpy as np
 from collections import defaultdict
 from scidocs.embeddings import load_embeddings_from_jsonl
 
+def get_wiki_citations_metrics(data_paths, embeddings_path=None, val_or_test='test'):
 
-def get_view_cite_read_metrics(data_paths, embeddings_path=None, val_or_test='test'):
-    """Run the cocite, coread, coview, cite task evaluations.
+    """Run the cite task evaluations.
 
     Arguments:
-        data_paths {scidocs.paths.DataPaths} -- A DataPaths objects that points to 
+        data_paths {scidocs.paths.DataPaths} -- A DataPaths objects that points to
                                                 all of the SciDocs files
 
     Keyword Arguments:
@@ -23,28 +23,22 @@ def get_view_cite_read_metrics(data_paths, embeddings_path=None, val_or_test='te
         metrics {dict} -- NDCG and MAP for all four tasks.
     """
     assert val_or_test in ('val', 'test'), "The val_or_test parameter must be one of 'val' or 'test'"
-    
-    print('Loading co-view, co-read, cite, and co-cite embeddings...')
+
+    print('Loading cite embeddings...')
     embeddings = load_embeddings_from_jsonl(embeddings_path)
 
-    run_path = os.path.join(data_paths.base_path, 'temp.run')     
+    run_path = os.path.join(data_paths.base_path, 'temp.run')
 
-    #print('Running the co-view, co-read, cite, and co-cite tasks...')
-    print('Running the cite, and co-cite tasks...')
+    # print('Running the co-view, co-read, cite, and co-cite tasks...')
+    print('Running the wiki cite task...')
     if val_or_test == 'test':
         make_run_from_embeddings(data_paths.cite_test, embeddings, run_path, topk=5, generate_random_embeddings=False)
         cite_results = qrel_metrics(data_paths.cite_test, run_path, metrics=('ndcg', 'map'))
-
-        make_run_from_embeddings(data_paths.cocite_test, embeddings, run_path, topk=5, generate_random_embeddings=False)
-        cocite_results = qrel_metrics(data_paths.cocite_test, run_path, metrics=('ndcg', 'map'))
     elif val_or_test == 'val':
         make_run_from_embeddings(data_paths.cite_val, embeddings, run_path, topk=5, generate_random_embeddings=False)
         cite_results = qrel_metrics(data_paths.cite_val, run_path, metrics=('ndcg', 'map'))
 
-        make_run_from_embeddings(data_paths.cocite_val, embeddings, run_path, topk=5, generate_random_embeddings=False)
-        cocite_results = qrel_metrics(data_paths.cocite_val, run_path, metrics=('ndcg', 'map'))
-    
-    return {'cite': cite_results, 'co-cite': cocite_results}
+    return {'cite': cite_results}
 
 
 def qrel_metrics(qrel_file, run_file, metrics=('ndcg', 'map')):

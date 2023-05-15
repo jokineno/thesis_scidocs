@@ -41,6 +41,11 @@ class ThesisDataPaths:
 
         # =======================THESIS SOURCES START=================
         self.paper_metadata_cls = os.path.join(base_path, 'sample-metadata-cls.json')
+        self.paper_metadata_cite = os.path.join(base_path, 'paper_metadata_cite.json')
+
+        # THESIS CITATION
+        self.cite_val = os.path.join(base_path, 'cite', 'val.qrel')
+        self.cite_test = os.path.join(base_path, 'cite', 'test.qrel')
 
         # THESIS WIKI CLASS CLASSIFICATION
         self.wiki_cls_train = os.path.join(base_path, 'wiki_cls', 'train.csv')

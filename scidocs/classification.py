@@ -10,35 +10,6 @@ from scidocs.embeddings import load_embeddings_from_jsonl
 
 np.random.seed(1)
 
-
-def get_mag_mesh_metrics(data_paths, embeddings_path=None, val_or_test='test', n_jobs=1, debug=False):
-    """Run MAG and MeSH tasks.
-
-    Arguments:
-        data_paths {scidocs.paths.DataPaths} -- A DataPaths objects that points to 
-                                                all of the SciDocs files
-
-    Keyword Arguments:
-        embeddings_path {str} -- Path to the embeddings jsonl (default: {None})
-        val_or_test {str} -- Whether to return metrics on validation set (to tune hyperparams)
-                             or the test set (what's reported in SPECTER paper)
-
-    Returns:
-        metrics {dict} -- F1 score for both tasks.
-    """
-    assert val_or_test in ('val', 'test'), "The val_or_test parameter must be one of 'val' or 'test'"
-    
-    print('Loading MAG/MeSH embeddings...')
-    embeddings = load_embeddings_from_jsonl(embeddings_path)
-
-    print('Running the Wiki Class task...')
-    X, y = get_X_y_for_classification(embeddings, data_paths.wiki_cls_train, data_paths.wiki_cls_val, data_paths.wiki_cls_test)
-    wiki_cls = classify(X['train'], y['train'], X[val_or_test], y[val_or_test], n_jobs=n_jobs, debug=debug)
-    
-
-    return {'mag': {'f1': wiki_cls}}
-
-
 def get_wiki_class_metrics(data_paths, embeddings_path=None, val_or_test='test', n_jobs=1, debug=False):
     """Run MAG and MeSH tasks.
 
@@ -119,13 +90,17 @@ def get_X_y_for_classification(embeddings, train_path, val_path, test_path):
     print("train: {}, test: {}, val: {}".format(train.shape, test.shape, val.shape))
     X = defaultdict(list)
     y = defaultdict(list)
+    missing_id_counter = 0
     for dataset_name, dataset in zip(['train', 'val', 'test'], [train, val, test]):
         for s2id, class_label in dataset.values:
             if s2id not in embeddings:
                 X[dataset_name].append(np.zeros(dim))
+                missing_id_counter += 1
             else:
                 X[dataset_name].append(embeddings[s2id])
             y[dataset_name].append(class_label)
         X[dataset_name] = np.array(X[dataset_name])
         y[dataset_name] = np.array(y[dataset_name])
+
+    print("####Missing Ids from Embeddings: {}.".format(missing_id_counter))
     return X, y
