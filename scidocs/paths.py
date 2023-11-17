@@ -2,8 +2,10 @@ import os
 
 PROJECT_ROOT_PATH = os.path.abspath(os.path.join(os.getcwd()))
     
-    
+
+
 class DataPaths:
+    # ============= ORIGINAL DATA PATHS ==============
     def __init__(self, base_path=None):
         if base_path is None:
             base_path = os.path.join(PROJECT_ROOT_PATH, 'data')
@@ -32,6 +34,7 @@ class DataPaths:
         self.paper_metadata_view_cite_read = os.path.join(base_path, 'paper_metadata_view_cite_read.json')
         self.paper_metadata_mag_mesh = os.path.join(base_path, 'paper_metadata_mag_mesh.json')
 
+        # ============= ORIGINAL DATA PATHS ==============
 
 class ThesisDataPaths:
     def __init__(self, base_path=None):
@@ -39,8 +42,9 @@ class ThesisDataPaths:
             base_path = os.path.join(PROJECT_ROOT_PATH, 'thesis_data')
         self.base_path = base_path
 
+
         # =======================THESIS SOURCES START=================
-        self.paper_metadata_cls = os.path.join(base_path, 'sample-metadata-cls.json')
+        self.paper_metadata_cls = os.path.join(base_path, 'paper-metadata-cls.json')
         self.paper_metadata_cite = os.path.join(base_path, 'paper_metadata_cite.json')
 
         # THESIS CITATION

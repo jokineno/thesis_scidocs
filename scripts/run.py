@@ -1,7 +1,7 @@
 
 from scidocs.paths import ThesisDataPaths
 from scidocs import get_wikidocs_metrics
-
+import sys
 import argparse
 import json
 import pandas as pd
@@ -16,8 +16,8 @@ def main():
     parser.add_argument('--n-jobs', default=12, help='number of parallel jobs for classification (related to mesh/mag metrics)', type=int)
     parser.add_argument('--cuda-device', default=-1, help='specify if you want to use gpu for training the recommendation model; -1 means use cpu')
     parser.add_argument('--data-path', default=None, help='path to the data directory where scidocs files reside. If None, it will default to the `data/` directory')
-    parser.add_argument("--debug", default=False, type=bool, help="DEBUG OR NOT")
-    parser.add_argument("--is_thesis", default=False, type=bool, help="is thesis or not ")
+    parser.add_argument('--debug', default=False, action='store_true')
+    parser.add_argument('--no-debug', dest='foo', action='store_false')
     args = parser.parse_args()
     print("args: ", args)
 
@@ -25,7 +25,7 @@ def main():
     debug = args.debug
     print("DEBUG:", debug)
 
-    print("==================Running thesis version 1==================\n")
+    print("==================Running get_wikidocs_metrics==================\n")
     metrics = get_wikidocs_metrics(
         data_paths,
         args.cls,
@@ -35,8 +35,9 @@ def main():
         cuda_device=args.cuda_device,
         debug=debug
     )
-    print("=============THESIS DONE==============")
-
+    print("=============Running completed==============")
+    print("\n\n")
+    print("=============Printing Metrics=============")
     flat_metrics = {}
     for k, v in metrics.items():
         if not isinstance(v, dict):
@@ -47,6 +48,7 @@ def main():
                 flat_metrics[key] = vv
     df = pd.DataFrame(list(flat_metrics.items())).T
     print(df)
+    print("=============Metrics completed=============")
 
 if __name__ == '__main__':
     main()

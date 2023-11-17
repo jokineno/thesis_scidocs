@@ -129,3 +129,6 @@ dmypy.json
 .pyre/
 /data/
 /thesis_data/
+TODO.md
+label_encoder.pkl
+result_table.csv

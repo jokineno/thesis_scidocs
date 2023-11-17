@@ -2,6 +2,7 @@ import json
 import numpy as np
 from tqdm import tqdm
 
+
 def load_embeddings_from_jsonl(embeddings_path):
     """Load embeddings from a jsonl file.
     The file must have one embedding per line in JSON format.
@@ -16,7 +17,7 @@ def load_embeddings_from_jsonl(embeddings_path):
     """
     embeddings = {}
     with open(embeddings_path, 'r') as f:
-        for line in tqdm(f, desc='Reading embeddings from file {}...'.format(embeddings_path)):
+        for line in tqdm(f, desc='[*] Loading embeddings from file {}...'.format(embeddings_path)):
             line_json = json.loads(line)
             embeddings[line_json['paper_id']] = np.array(line_json['embedding'])
     return embeddings

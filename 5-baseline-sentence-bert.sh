@@ -4,16 +4,22 @@ set -x
 
 python setup.py install > /dev/null
 
-echo "Starting to predict with ###BASELINE MODEL 2 - SENTENCE BERT###"
+echo "Starting to predict with BASELINE 2 FINNISH Sentence BERT####"
+
+set -u
+DATA_DIR="thesis_data"
+
+MODE="--no-debug"
+if [[ $* == *--debug* ]]
+then
+ MODE="--debug"
+fi
+
 python scripts/run.py \
-  --user-citation thesis_data/sbert/user-citation.jsonl \
-  --cls thesis_data/sbert/cls.jsonl \
+  --cls $DATA_DIR/sbert-embeddings/20231117_192643_baseline_sbert_cls.jsonl \
   --val_or_test test \
   --n-jobs 12 \
   --cuda-device -1 \
-  --data-path thesis_data \
-  --debug true \
-  --is_thesis True
-fi
+  --data-path $DATA_DIR
 
 echo "Done"
