@@ -29,8 +29,8 @@ then
  MODE="--debug"
 fi
 python scripts/run.py \
-  --cls $DATA_DIR/myown-embeddings/20231117_194831_myown_embeddings_cls.jsonl \
-  --val_or_test val \
+  --cls $DATA_DIR/myown-embeddings/20231118_140627_myown_embeddings_cls.jsonl \
+  --val_or_test test \
   --n-jobs 12 \
   --cuda-device -1 \
   --data-path $DATA_DIR \

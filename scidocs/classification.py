@@ -74,7 +74,7 @@ def classify(X_train, y_train, X_test, y_test, n_jobs=1, debug=False):
                                  "preds_desc": le.inverse_transform(preds),
                                  "correct": y_test == preds})
 
-    print(result_table)
+    print("correct / all", result_table.correct.sum(),"/", len(result_table), result_table.correct.sum() / len(result_table))
     print("[*] Saving in to result_table.csv...")
     result_table.to_csv("result_table.csv", sep=";", index=False)
 
