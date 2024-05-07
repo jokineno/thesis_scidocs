@@ -130,5 +130,5 @@ dmypy.json
 /data/
 /thesis_data/
 TODO.md
-label_encoder.pkl
+label_encoder*
 result_table.csv

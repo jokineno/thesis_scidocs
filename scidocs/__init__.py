@@ -5,11 +5,11 @@ from scidocs.user_activity_and_citations import get_wiki_citations_metrics
 
 def get_wikidocs_metrics(data_paths,
                         classification_embeddings_path,
+                        classification_embeddings_path_second,
                         citations_embeddings_path,
                         val_or_test='test',
                         n_jobs=-1,
-                        cuda_device=-1,
-                        debug=False):
+                        cuda_device=-1):
     """This is the master wrapper that computes the SciDocs metrics given
     three embedding files (jsonl) and some optional parameters.
 
@@ -39,9 +39,12 @@ def get_wikidocs_metrics(data_paths,
     wikidocs_metrics = {}
 
     if classification_embeddings_path:
-        wikidocs_metrics.update(get_wiki_class_metrics(data_paths, classification_embeddings_path, val_or_test=val_or_test, n_jobs=n_jobs, debug=debug))
+        wikidocs_metrics.update(get_wiki_class_metrics(data_paths, classification_embeddings_path, val_or_test=val_or_test, n_jobs=n_jobs, task="top"))
     else:
         print("No classifications embeddings path. Not running classification task")
+
+    if classification_embeddings_path_second:
+        wikidocs_metrics.update(get_wiki_class_metrics(data_paths, classification_embeddings_path_second, val_or_test=val_or_test, n_jobs=n_jobs, task="second"))
 
     if citations_embeddings_path:
         wikidocs_metrics.update(get_wiki_citations_metrics(data_paths, citations_embeddings_path, val_or_test=val_or_test))
